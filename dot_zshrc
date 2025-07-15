@@ -1,0 +1,65 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+bindkey -e
+ZSH_THEME="powerlevel10k/powerlevel10k"
+# End of lines configured by zsh-newuser-install
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# export PYENV_ROOT="$HOME/.pyenv"
+# [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+export WORKON_HOME=$HOME/.virtualenvs
+source /usr/bin/virtualenvwrapper.sh
+export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
+# VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+
+# Created by `pipx` on 2024-10-12 11:54:15
+export PATH="$PATH:/home/mijka/.local/bin"
+
+#export WORKON_HOME=$HOME/.virtualenvs
+#export VIRTUALENVWRAPPER_PYTHON=$(which python3)
+#source /home/mijka/.pyenv/versions/3.9.7/bin/virtualenvwrapper.sh
+
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+
+
+news() {
+    echo $'\e[0;34m:: \e[1;37mArch Linux News:\e[m'
+    perl << 'EOF'
+use Date::Parse;
+$_ = qx{curl -s "https://archlinux.org/feeds/news/"};
+for (m{<item>(.*?)</item>}sg) {
+    ($t) = m{<title>(.*?)</title>};
+    ($d) = m{<pubDate>(.*?)</pubDate>};
+    $t =~ s/&amp;/&/g;
+    $t =~ s/&lt;/</g;
+    $t =~ s/&gt;/>/g;
+    $d = (time - str2time($d)) / (60 * 60 * 24);
+    if ($d < 7.5) {
+        $c = "\e[0;30;41m X \e[1;31;40m";
+    } elsif ($d < 14.5) {
+        $c = "\e[0;30;43m X \e[1;33;40m";
+    } else {
+        $c = "   ";
+    }
+    print $c, sprintf("%6.1f", $d), " days ago\e[m | ", $t, "\n";
+    last if ++$n == 5;
+}
+EOF
+}
