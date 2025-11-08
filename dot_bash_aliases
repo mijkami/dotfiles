@@ -5,3 +5,4 @@ alias yayu='yay -Syu --noconfirm'
 alias ocode="cd /home/mijka/code/openclassrooms/projets/"
 alias mlflow_ui="mlflow ui && xdg-open http://localhost:5000/"
 alias up='news; sudo pacman -Syu'
+alias cleanup="paccache -ruk0 && yes | yay -Scc"
